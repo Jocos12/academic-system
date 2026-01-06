@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - UNT Academic System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy-blue: #1e3a8a;
+      --dark-navy: #1e293b;
+      --orange: #f97316;
+      --light-orange: #fb923c;
+      --white: #ffffff;
+      --light-gray: #f1f5f9;
+      --text-gray: #64748b;
+      --border-gray: #e2e8f0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--navy-blue) 0%, var(--dark-navy) 100%);
+      min-height: 100vh;
+      color: #334155;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: var(--navy-blue);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: var(--text-gray);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--orange);
+    }
+
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 80px);
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      gap: 2rem;
+    }
+
+    .left-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .illustration-content {
+      text-align: center;
+    }
+
+    .illustration-content h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .illustration-content p {
+      font-size: 1.5rem;
+      opacity: 0.9;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .illustration-image {
+      margin-top: 2rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .right-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-container {
+      background: white;
+      padding: 3rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 500px;
+      position: relative;
+    }
+
+    .form-step {
+      display: none;
+    }
+
+    .form-step.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    h2 {
+      color: var(--navy-blue);
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-gray);
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--navy-blue);
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--border-gray);
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    }
+
+    .password-input-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-gray);
+      font-size: 1.2rem;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: var(--orange);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--light-orange);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: var(--text-gray);
+      cursor: not-allowed;
+      transform: none;
+      opacity: 0.6;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 1.5rem 0;
+      color: var(--text-gray);
+      position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: var(--border-gray);
+    }
+
+    .divider::before {
+      left: 0;
+    }
+    .divider::after {
+      right: 0;
+    }
+
+    .btn-google {
+      width: 100%;
+      padding: 1rem;
+      background: white;
+      color: var(--navy-blue);
+      border: 2px solid var(--border-gray);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .btn-google:hover {
+      border-color: var(--navy-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(30, 58, 138, 0.1);
+    }
+
+    .otp-input-group {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .otp-input {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border: 2px solid var(--border-gray);
+      border-radius: 10px;
+      transition: all 0.3s;
+    }
+
+    .otp-input:focus {
+      outline: none;
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    }
+
+    .otp-input:disabled {
+      background: #f5f5f5;
+      cursor: not-allowed;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--navy-blue);
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      color: var(--orange);
+      transform: translateX(-5px);
+    }
+
+    .signup-link,
+    .resend-text {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--text-gray);
+    }
+
+    .signup-link a,
+    .resend-text a {
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .signup-link a:hover,
+    .resend-text a:hover {
+      text-decoration: underline;
+    }
+
+    #emailDisplay {
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    .loading-spinner {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 10px;
+      z-index: 1000;
+    }
+
+    .loading-spinner.active {
+      display: block;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid var(--border-gray);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .error-message,
+    .success-message {
+      display: none;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+      text-align: center;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .error-message {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+    }
+
+    .success-message {
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      color: #16a34a;
+    }
+
+    .error-message.active,
+    .success-message.active {
+      display: block;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: var(--navy-blue);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .timer-display {
+      text-align: center;
+      margin: 1rem 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy-blue);
+    }
+
+    .timer-display.warning {
+      color: #dc2626;
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+      .left-section {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        padding: 2rem 1.5rem;
+      }
+      .otp-input {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="logo">
+      <span class="logo-text">🎓 UNT</span>
+    </div>
+    <div class="nav-links">
+      <a href="Index.html">Home</a>
+      <a href="#about">About Us</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="main-container">
+  <div class="left-section">
+    <div class="illustration">
+      <div class="illustration-content">
+        <h1>Welcome to UNT</h1>
+        <p>Access your academic portal</p>
+        <div class="illustration-image">
+          <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+            <rect x="150" y="100" width="200" height="300" rx="20" fill="#1e3a8a" opacity="0.1" />
+            <circle cx="250" cy="180" r="40" fill="#f97316" />
+            <rect x="200" y="240" width="100" height="15" rx="7.5" fill="#1e3a8a" opacity="0.3" />
+            <rect x="200" y="270" width="100" height="15" rx="7.5" fill="#1e3a8a" opacity="0.3" />
+            <rect x="210" y="310" width="80" height="30" rx="15" fill="#f97316" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-section">
+    <div class="login-container">
+      <!-- Email & Password Step -->
+      <div id="credentialsStep" class="form-step active">
+        <h2>Login</h2>
+        <p class="subtitle">Welcome back! Please enter your credentials.</p>
+
+        <form id="credentialsForm">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter your Email" required autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="password" placeholder="Enter your Password" required autocomplete="current-password" />
+              <button type="button" class="toggle-password" id="togglePassword">👁️</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">Continue</button>
+
+          <div class="divider">OR</div>
+
+          <button type="button" class="btn-google">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+            </svg>
+            Login with Google
+          </button>
+
+          <p class="signup-link">
+            Don't have an account? <a href="/register.html">Sign Up</a>
+          </p>
+        </form>
+      </div>
+
+      <!-- OTP Step -->
+      <div id="otpStep" class="form-step">
+        <button class="back-btn" id="backBtn">← Back</button>
+        <h2>Enter OTP</h2>
+        <p class="subtitle">
+          We've sent a 6-digit code to <span id="emailDisplay"></span>
+        </p>
+        <div class="role-badge" id="roleBadge"></div>
+
+        <div class="timer-display" id="timerDisplay">
+          ⏱️ Time remaining: <span id="timerMinutes">05</span>:<span id="timerSeconds">00</span>
+        </div>
+
+        <form id="otpForm">
+          <div class="otp-input-group">
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric" pattern="[0-9]" data-index="0" />
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric" pattern="[0-9]" data-index="1" />
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric" pattern="[0-9]" data-index="2" />
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric" pattern="[0-9]" data-index="3" />
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric" pattern="[0-9]" data-index="4" />
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric" pattern="[0-9]" data-index="5" />
+          </div>
+
+          <p class="resend-text">
+            Didn't receive code? <a href="#" id="resendOTP">Resend OTP</a>
+          </p>
+
+          <button type="submit" class="btn-primary" id="verifyBtn">Verify & Login</button>
+        </form>
+      </div>
+
+      <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+
+      <div id="errorMessage" class="error-message"></div>
+      <div id="successMessage" class="success-message"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/SessionTracker.js"></script>
+<script src="js/user_session_handler.js"></script>
+<script>
+  const API_BASE_URL = 'http://localhost:8080/api';
+
+  const credentialsStep = document.getElementById('credentialsStep');
+  const otpStep = document.getElementById('otpStep');
+  const credentialsForm = document.getElementById('credentialsForm');
+  const otpForm = document.getElementById('otpForm');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const togglePassword = document.getElementById('togglePassword');
+  const emailDisplay = document.getElementById('emailDisplay');
+  const roleBadge = document.getElementById('roleBadge');
+  const backBtn = document.getElementById('backBtn');
+  const resendOTPBtn = document.getElementById('resendOTP');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const errorMessage = document.getElementById('errorMessage');
+  const successMessage = document.getElementById('successMessage');
+  const otpInputs = document.querySelectorAll('.otp-input');
+  const googleBtn = document.querySelector('.btn-google');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const timerMinutes = document.getElementById('timerMinutes');
+  const timerSeconds = document.getElementById('timerSeconds');
+  const verifyBtn = document.getElementById('verifyBtn');
+
+  let userEmail = '';
+  let userRole = '';
+  let userId = null;
+  let otpTimer = null;
+  let otpExpiryTime = null;
+
+  // Timer functions
+  function startOTPTimer() {
+    stopOTPTimer();
+    otpExpiryTime = Date.now() + (5 * 60 * 1000); // 5 minutes
+
+    otpTimer = setInterval(() => {
+      const remaining = otpExpiryTime - Date.now();
+
+      if (remaining <= 0) {
+        stopOTPTimer();
+        disableOTPInputs();
+        showError('OTP has expired. Please request a new one.');
+        return;
+      }
+
+      const mins = Math.floor(remaining / 60000);
+      const secs = Math.floor((remaining % 60000) / 1000);
+
+      timerMinutes.textContent = mins.toString().padStart(2, '0');
+      timerSeconds.textContent = secs.toString().padStart(2, '0');
+
+      if (remaining < 60000) {
+        timerDisplay.classList.add('warning');
+      }
+    }, 1000);
+  }
+
+  function stopOTPTimer() {
+    if (otpTimer) {
+      clearInterval(otpTimer);
+      otpTimer = null;
+    }
+    timerDisplay.classList.remove('warning');
+  }
+
+  function disableOTPInputs() {
+    otpInputs.forEach(input => {
+      input.disabled = true;
+    });
+    verifyBtn.disabled = true;
+  }
+
+  function enableOTPInputs() {
+    otpInputs.forEach(input => {
+      input.disabled = false;
+    });
+    verifyBtn.disabled = false;
+  }
+
+  // Toggle password visibility
+  togglePassword.addEventListener('click', () => {
+    const type = passwordInput.type === 'password' ? 'text' : 'password';
+    passwordInput.type = type;
+    togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+  });
+
+  // Step 1: Verify credentials and request OTP
+  credentialsForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    userEmail = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!userEmail || !password) {
+      showError('Please enter both email and password');
+      return;
+    }
+
+    if (!isValidEmail(userEmail)) {
+      showError('Please enter a valid email address');
+      return;
+    }
+
+    showLoading(true);
+    hideMessages();
+
+    try {
+      console.log('🔐 Verifying credentials for:', userEmail);
+
+      const verifyResponse = await fetch(`${API_BASE_URL}/auth/verify-credentials`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: userEmail, password: password }),
+      });
+
+      console.log('📡 Response status:', verifyResponse.status);
+
+      if (!verifyResponse.ok) {
+        const errorText = await verifyResponse.text();
+        console.error('❌ Verification failed:', errorText);
+        throw new Error('Invalid email or password');
+      }
+
+      const userData = await verifyResponse.json();
+      console.log('✅ User verified:', userData);
+
+      userRole = userData.role;
+      userId = userData.id;
+
+      // Request OTP
+      console.log('📧 Requesting OTP...');
+      const otpResponse = await fetch(`${API_BASE_URL}/auth/request-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: userEmail }),
+      });
+
+      if (otpResponse.ok) {
+        console.log('✅ OTP sent successfully');
+
+        emailDisplay.textContent = userEmail;
+        roleBadge.textContent = `${userRole} Portal`;
+        credentialsStep.classList.remove('active');
+        otpStep.classList.add('active');
+
+        enableOTPInputs();
+        startOTPTimer();
+
+        otpInputs[0].focus();
+        showSuccess('OTP sent to your email (valid for 5 minutes)');
+      } else {
+        throw new Error('Failed to send OTP');
+      }
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      showError(error.message || 'Login failed. Please check your credentials.');
+    } finally {
+      showLoading(false);
+    }
+  });
+
+  // OTP Input handling
+  otpInputs.forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+      const value = e.target.value;
+      if (!/^\d*$/.test(value)) {
+        e.target.value = '';
+        return;
+      }
+      if (value && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !e.target.value && index > 0) {
+        otpInputs[index - 1].focus();
+      }
+    });
+
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pastedData = e.clipboardData.getData('text');
+      const digits = pastedData.replace(/\D/g, '').split('');
+      digits.forEach((digit, i) => {
+        if (index + i < otpInputs.length) {
+          otpInputs[index + i].value = digit;
+        }
+      });
+      const lastIndex = Math.min(index + digits.length, otpInputs.length - 1);
+      otpInputs[lastIndex].focus();
+    });
+  });
+
+
+
+otpForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const otpCode = Array.from(otpInputs).map((input) => input.value).join('');
+
+    if (otpCode.length !== 6) {
+      showError('Please enter all 6 digits');
+      return;
+    }
+
+    if (Date.now() >= otpExpiryTime) {
+      showError('OTP has expired. Please request a new one.');
+      disableOTPInputs();
+      return;
+    }
+
+    showLoading(true);
+    hideMessages();
+
+    try {
+      console.log('🔐 Verifying OTP...');
+
+      const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: userEmail, otp: otpCode }),
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        console.log('✅ Login successful:', userData);
+
+        stopOTPTimer();
+
+        // ✅ CRITICAL FIX: Save parentId specifically for PARENT role
+        if (userData.role === 'PARENT') {
+            localStorage.setItem('parentId', userData.id);
+            console.log('✅ Parent ID saved:', userData.id);
+        }
+
+        // ✅ Save with UserSessionHandler
+        if (window.UserSessionHandler) {
+            const sessionHandler = UserSessionHandler.getInstance();
+            sessionHandler.saveUserSession(userData);
+        }
+
+        // ✅ Save to localStorage
+        localStorage.setItem('unt_userId', userData.id);
+        localStorage.setItem('unt_userEmail', userData.email);
+        localStorage.setItem('unt_userRole', userData.role);
+
+        // ✅ Save to sessionStorage
+        sessionStorage.setItem('user', JSON.stringify(userData));
+        sessionStorage.setItem('userRole', userData.role);
+        sessionStorage.setItem('userId', userData.id);
+        sessionStorage.setItem('userEmail', userData.email);
+
+        showSuccess('Login successful! Redirecting...');
+        setTimeout(() => redirectToDashboard(userData.role, userData), 1500);
+      } else {
+        throw new Error('Invalid or expired OTP');
+      }
+    } catch (error) {
+      console.error('❌ OTP verification error:', error);
+      showError(error.message || 'Invalid or expired OTP');
+      otpInputs.forEach((input) => (input.value = ''));
+      otpInputs[0].focus();
+    } finally {
+      showLoading(false);
+    }
+});
+
+
+
+
+  // Back button
+  backBtn.addEventListener('click', () => {
+    stopOTPTimer();
+    otpStep.classList.remove('active');
+    credentialsStep.classList.add('active');
+    otpInputs.forEach((input) => (input.value = ''));
+    passwordInput.value = '';
+    enableOTPInputs();
+    hideMessages();
+  });
+
+  // Resend OTP
+  resendOTPBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    showLoading(true);
+    hideMessages();
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/request-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: userEmail }),
+      });
+
+      if (response.ok) {
+        enableOTPInputs();
+        startOTPTimer();
+        showSuccess('New OTP sent to your email (valid for 5 minutes)');
+        setTimeout(hideMessages, 3000);
+        otpInputs.forEach((input) => (input.value = ''));
+        otpInputs[0].focus();
+      } else {
+        throw new Error('Failed to resend OTP');
+      }
+    } catch (error) {
+      showError(error.message || 'Failed to resend OTP');
+    } finally {
+      showLoading(false);
+    }
+  });
+
+  // Google Sign-In placeholder
+  if (googleBtn) {
+    googleBtn.addEventListener('click', () => {
+      showSuccess('Google Sign-In will be implemented soon');
+      setTimeout(hideMessages, 3000);
+    });
+  }
+
+  // Helper Functions
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function showLoading(show) {
+    loadingSpinner.classList.toggle('active', show);
+  }
+
+  function showError(message) {
+    errorMessage.textContent = message;
+    errorMessage.classList.add('active');
+    successMessage.classList.remove('active');
+  }
+
+  function showSuccess(message) {
+    successMessage.textContent = message;
+    successMessage.classList.add('active');
+    errorMessage.classList.remove('active');
+  }
+
+  function hideMessages() {
+    errorMessage.classList.remove('active');
+    successMessage.classList.remove('active');
+  }
+
+
+async function redirectToDashboard(role, userData) {
+    const dashboards = {
+      STUDENT: '/student/StudentDashboard.html',
+      LECTURER: '/lecturer/LectureDashboard.html',
+      ADMIN: '/admin/admin.html',
+      PARENT: '/parent/ParentDashboard.html',
+    };
+
+    // ✅ SAVE USER DATA WITH SESSION HANDLER
+    if (window.UserSessionHandler) {
+        const sessionHandler = UserSessionHandler.getInstance();
+        sessionHandler.saveUserSession(userData);
+    }
+
+    window.location.href = dashboards[role] || '/';
+}
+
+  // Check if already logged in
+  window.addEventListener('load', () => {
+    const user = sessionStorage.getItem('user');
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        redirectToDashboard(userData.role);
+      } catch (e) {
+        console.error('Error parsing stored user data:', e);
+        sessionStorage.clear();
+      }
+    }
+  });
+
+  // Clean up timer on page unload
+  window.addEventListener('beforeunload', () => {
+    stopOTPTimer();
+  });
+</script>
+</body>
+</html>

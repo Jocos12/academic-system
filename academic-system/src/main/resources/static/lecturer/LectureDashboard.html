@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNT Lecturer Dashboard</title>
+  <link rel="stylesheet" href="../css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <h1 id="pageTitle">Dashboard</h1>
+  <div class="topbar-right">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+
+    <div class="notification-container">
+      <button class="notification-toggle" id="notificationToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="notification-badge" id="notificationBadge">0</span>
+      </button>
+      <div class="notification-dropdown" id="notificationDropdown">
+        <div class="notification-header">
+          <h3>Notifications</h3>
+          <button class="btn-text" id="markAllReadBtn">Mark all as read</button>
+        </div>
+        <div class="notification-list" id="notificationList">
+          <div class="loading">Loading notifications...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layout-wrapper">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <img src="../images/unt-logo.png" alt="UNT Logo" class="sidebar-logo">
+        <span>UNT Lecturer</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                </span>
+        <span class="text">Dashboard</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="profile">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+        <span class="text">My Profile</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="courses">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                </span>
+        <span class="text">My Courses</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="content">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <line x1="10" y1="9" x2="8" y2="9"></line>
+                    </svg>
+                </span>
+        <span class="text">Course Content</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="timetable">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </span>
+        <span class="text">My Timetable</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="students">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </span>
+        <span class="text">Students</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="grades">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </span>
+        <span class="text">Grades</span>
+      </a>
+
+
+      <a href="../WhatsApp.html" class="nav-item" id="whatsappNavLink">
+    <span class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+    </span>
+        <span class="text">WhatsApp</span>
+      </a>
+
+
+
+
+
+      <a href="#" class="nav-item" data-page="reports">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                </span>
+        <span class="text">Reports</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="analytics">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                </span>
+        <span class="text">Analytics</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="settings">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m8.66-9l-5.2 3M8.54 14l-5.2 3m13.32 0l-5.2-3M8.54 10l-5.2-3"></path>
+                    </svg>
+                </span>
+        <span class="text">Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <img src="https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=100" alt="Lecturer" class="profile-avatar" id="profileAvatar">
+        <div class="profile-info">
+          <div class="profile-name" id="lecturerName">Loading...</div>
+          <div class="profile-email" id="lecturerEmail">Loading...</div>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </span>
+        <span class="text">Logout</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="content-area">
+
+      <!-- DASHBOARD PAGE -->
+      <div id="dashboardPage" class="page-content active">
+        <div class="stats-grid">
+          <div class="stat-card card-blue">
+            <div class="stat-content">
+              <div class="stat-label">Total Courses</div>
+              <div class="stat-value" id="totalCourses">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card card-green">
+            <div class="stat-content">
+              <div class="stat-label">Content Uploaded</div>
+              <div class="stat-value" id="totalContent">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card card-purple">
+            <div class="stat-content">
+              <div class="stat-label">Total Students</div>
+              <div class="stat-value" id="totalStudents">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card card-orange">
+            <div class="stat-content">
+              <div class="stat-label">Approved Content</div>
+              <div class="stat-value" id="approvedContent">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="card-header">
+              <h3>Content by Type</h3>
+            </div>
+            <canvas id="contentTypeChart"></canvas>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-header">
+              <h3>Content Status</h3>
+            </div>
+            <canvas id="contentStatusChart"></canvas>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3>Recent Content</h3>
+              <a href="#" class="view-all" data-page="content">View All</a>
+            </div>
+            <div id="recentContent" class="loading">Loading...</div>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3>Today's Schedule</h3>
+              <a href="#" class="view-all" data-page="timetable">View All</a>
+            </div>
+            <div id="todaySchedule" class="loading">Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE PAGE -->
+      <div id="profilePage" class="page-content">
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>My Profile</h3>
+            <button class="btn-primary" id="editProfileBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              Edit Profile
+            </button>
+          </div>
+
+          <div class="profile-details" id="profileDetails">
+            <div class="loading">Loading profile...</div>
+          </div>
+        </div>
+
+        <div class="dashboard-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h3>Professional Information</h3>
+          </div>
+          <div id="professionalInfo" class="loading">Loading...</div>
+        </div>
+      </div>
+
+      <!-- COURSES PAGE -->
+      <div id="coursesPage" class="page-content">
+        <div class="card-header" style="margin-bottom: 1.5rem;">
+          <h3>My Courses</h3>
+          <button class="btn-primary" id="exportCoursesBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export PDF
+          </button>
+        </div>
+
+        <div class="table-controls">
+          <input type="text" class="search-input" id="searchCourse" placeholder="Search courses...">
+          <select class="filter-select" id="courseYearFilter">
+            <option value="">All Years</option>
+            <option value="1">Year 1</option>
+            <option value="2">Year 2</option>
+            <option value="3">Year 3</option>
+            <option value="4">Year 4</option>
+          </select>
+          <select class="filter-select" id="courseSemesterFilter">
+            <option value="">All Semesters</option>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+          </select>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+              <tr>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Faculty</th>
+                <th>Department</th>
+                <th>Year</th>
+                <th>Semester</th>
+                <th>Credits</th>
+                <th>Max Students</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody id="coursesTableBody">
+              <tr>
+                <td colspan="9" class="loading">Loading courses...</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- COURSE CONTENT PAGE -->
+      <div id="contentPage" class="page-content">
+        <div class="stats-grid" style="margin-bottom: 1.5rem;">
+          <div class="stat-card card-blue">
+            <div class="stat-content">
+              <div class="stat-label">Total Uploads</div>
+              <div class="stat-value" id="contentTotalUploads">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card card-green">
+            <div class="stat-content">
+              <div class="stat-label">Approved</div>
+              <div class="stat-value" id="contentApproved">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card card-orange">
+            <div class="stat-content">
+              <div class="stat-label">Pending</div>
+              <div class="stat-value" id="contentPending">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card card-purple">
+            <div class="stat-content">
+              <div class="stat-label">Rejected</div>
+              <div class="stat-value" id="contentRejected">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-header" style="margin-bottom: 1.5rem;">
+          <h3>Course Content Management</h3>
+          <div class="header-actions">
+            <button class="btn-primary" id="uploadContentBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Upload Content
+            </button>
+            <button class="btn-primary" id="exportContentBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+              </svg>
+              Export
+            </button>
+          </div>
+        </div>
+
+        <div class="table-controls">
+          <input type="text" class="search-input" id="searchContent" placeholder="Search content...">
+          <select class="filter-select" id="contentTypeFilter">
+            <option value="">All Types</option>
+            <option value="LECTURE_NOTES">Lecture Notes</option>
+            <option value="ASSIGNMENT">Assignment</option>
+            <option value="EXAM">Exam</option>
+            <option value="VIDEO">Video</option>
+            <option value="OTHER">Other</option>
+          </select>
+          <select class="filter-select" id="contentStatusFilter">
+            <option value="">All Status</option>
+            <option value="APPROVED">Approved</option>
+            <option value="PENDING">Pending</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+          <select class="filter-select" id="contentCourseFilter">
+            <option value="">All Courses</option>
+          </select>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Course</th>
+                <th>Type</th>
+                <th>File Name</th>
+                <th>Size</th>
+                <th>Status</th>
+                <th>Upload Date</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody id="contentTableBody">
+              <tr>
+                <td colspan="9" class="loading">Loading content...</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <!-- TIMETABLE PAGE -->
+      <div id="timetablePage" class="page-content">
+        <div class="card-header" style="margin-bottom: 1.5rem;">
+          <h3>My Timetable</h3>
+          <div class="header-actions" style="display: flex; gap: 0.5rem;">
+            <button class="btn-primary" id="exportTimetableBtn" onclick="exportTimetablePDF()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download PDF
+            </button>
+            <button class="btn-secondary" onclick="loadTimetablePage()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Rest of timetable page content -->
+
+        <div class="table-controls">
+          <select class="filter-select" id="timetableDayFilter">
+            <option value="">All Days</option>
+            <option value="MONDAY">Monday</option>
+            <option value="TUESDAY">Tuesday</option>
+            <option value="WEDNESDAY">Wednesday</option>
+            <option value="THURSDAY">Thursday</option>
+            <option value="FRIDAY">Friday</option>
+            <option value="SATURDAY">Saturday</option>
+            <option value="SUNDAY">Sunday</option>
+          </select>
+          <select class="filter-select" id="timetableTypeFilter">
+            <option value="">All Types</option>
+            <option value="LECTURE">Lecture</option>
+            <option value="LAB">Lab</option>
+            <option value="TUTORIAL">Tutorial</option>
+          </select>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+              <tr>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Course</th>
+                <th>Type</th>
+                <th>Classroom</th>
+                <th>Building</th>
+                <th>Academic Year</th>
+              </tr>
+              </thead>
+              <tbody id="timetableTableBody">
+              <tr>
+                <td colspan="7" class="loading">Loading timetable...</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Weekly View -->
+        <div class="dashboard-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h3>Weekly Schedule</h3>
+          </div>
+          <div id="weeklySchedule" class="weekly-schedule">
+            <div class="loading">Loading weekly schedule...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENTS PAGE -->
+      <div id="studentsPage" class="page-content">
+        <div class="card-header" style="margin-bottom: 1.5rem;">
+          <h3>My Students</h3>
+          <button class="btn-primary" id="exportStudentsBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+            </svg>
+            Export
+          </button>
+        </div>
+
+        <div class="table-controls">
+          <input type="text" class="search-input" id="searchStudent" placeholder="Search students...">
+          <select class="filter-select" id="studentCourseFilter">
+            <option value="">All Courses</option>
+          </select>
+          <select class="filter-select" id="studentYearFilter">
+            <option value="">All Years</option>
+            <option value="1">Year 1</option>
+            <option value="2">Year 2</option>
+            <option value="3">Year 3</option>
+            <option value="4">Year 4</option>
+          </select>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Course</th>
+                <th>Year</th>
+                <th>Semester</th>
+                <th>GPA</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody id="studentsTableBody">
+              <tr>
+                <td colspan="8" class="loading">Loading students...</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRADES PAGE -->
+      <div id="gradesPage" class="page-content">
+        <div class="card-header" style="margin-bottom: 1.5rem;">
+          <h3>Grade Management</h3>
+          <button class="btn-primary" id="exportGradesBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+            </svg>
+            Export Grades
+          </button>
+        </div>
+
+        <div class="table-controls">
+          <select class="filter-select" id="gradeCourseFilter">
+            <option value="">Select Course</option>
+          </select>
+          <select class="filter-select" id="gradeStatusFilter">
+            <option value="">All Status</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="IN_PROGRESS">In Progress</option>
+          </select>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Course</th>
+                <th>Midterm</th>
+                <th>Final</th>
+                <th>Total</th>
+                <th>Grade</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody id="gradesTableBody">
+              <tr>
+                <td colspan="9" class="loading">Select a course to view grades...</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS PAGE -->
+      <div id="reportsPage" class="page-content">
+        <div class="card-header" style="margin-bottom: 1.5rem;">
+          <h3>My Reports</h3>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <h3 style="margin-bottom: 1rem;">Teaching Summary Report</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              Comprehensive report of all courses taught, students, and content uploaded.
+            </p>
+            <button class="btn-primary" id="generateTeachingReportBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+              </svg>
+              Download PDF
+            </button>
+          </div>
+
+          <div class="dashboard-card">
+            <h3 style="margin-bottom: 1rem;">Course Content Report</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              Detailed report of all content uploaded with status and approval information.
+            </p>
+            <button class="btn-primary" id="generateContentReportBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+              </svg>
+              Download PDF
+            </button>
+          </div>
+
+          <div class="dashboard-card">
+            <h3 style="margin-bottom: 1rem;">Student Performance Report</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              Analysis of student performance across all courses with grade distribution.
+            </p>
+            <button class="btn-primary" id="generatePerformanceReportBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+              </svg>
+              Download PDF
+            </button>
+          </div>
+
+          <div class="dashboard-card">
+            <h3 style="margin-bottom: 1rem;">Attendance Report</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              Student attendance tracking and statistics for all courses.
+            </p>
+            <button class="btn-primary" id="generateAttendanceReportBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+              </svg>
+              Download PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Report Generator -->
+        <div class="dashboard-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h3>Custom Report Generator</h3>
+          </div>
+          <form id="customReportForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reportType">Report Type</label>
+                <select id="reportType" class="form-input">
+                  <option value="courses">Courses</option>
+                  <option value="content">Content</option>
+                  <option value="students">Students</option>
+                  <option value="grades">Grades</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reportCourse">Course (Optional)</label>
+                <select id="reportCourse" class="form-input">
+                  <option value="">All Courses</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reportStartDate">Start Date</label>
+                <input type="date" id="reportStartDate" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="reportEndDate">End Date</label>
+                <input type="date" id="reportEndDate" class="form-input">
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+              </svg>
+              Generate Custom Report
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ANALYTICS PAGE -->
+      <div id="analyticsPage" class="page-content">
+        <div class="card-header" style="margin-bottom: 1.5rem;">
+          <h3>Analytics Dashboard</h3>
+          <select class="filter-select" id="analyticsTimeRange">
+            <option value="week">This Week</option>
+            <option value="month" selected>This Month</option>
+            <option value="semester">This Semester</option>
+            <option value="year">This Year</option>
+          </select>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card card-blue">
+            <div class="stat-content">
+              <div class="stat-label">Active Students</div>
+              <div class="stat-value" id="analyticsActiveStudents">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card card-green">
+            <div class="stat-content">
+              <div class="stat-label">Avg. Attendance</div>
+              <div class="stat-value" id="analyticsAvgAttendance">0%</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card card-purple">
+            <div class="stat-content">
+              <div class="stat-label">Avg. Grade</div>
+              <div class="stat-value" id="analyticsAvgGrade">0</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card card-orange">
+            <div class="stat-content">
+              <div class="stat-label">Pass Rate</div>
+              <div class="stat-value" id="analyticsPassRate">0%</div>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="card-header">
+              <h3>Grade Distribution</h3>
+            </div>
+            <canvas id="gradeDistributionChart"></canvas>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-header">
+              <h3>Student Performance Trend</h3>
+            </div>
+            <canvas id="performanceTrendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="charts-grid" style="margin-top: 1.5rem;">
+          <div class="chart-card">
+            <div class="card-header">
+              <h3>Attendance Trend</h3>
+            </div>
+            <canvas id="attendanceTrendChart"></canvas>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-header">
+              <h3>Content Upload Activity</h3>
+            </div>
+            <canvas id="contentActivityChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Performance by Course -->
+        <div class="dashboard-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h3>Performance by Course</h3>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+              <tr>
+                <th>Course</th>
+                <th>Students</th>
+                <th>Avg. Grade</th>
+                <th>Pass Rate</th>
+                <th>Avg. Attendance</th>
+              </tr>
+              </thead>
+              <tbody id="performanceByCourseBody">
+              <tr>
+                <td colspan="5" class="loading">Loading analytics...</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS PAGE -->
+      <div id="settingsPage" class="page-content">
+        <div class="card-header" style="margin-bottom: 1.5rem;">
+          <h3>Settings</h3>
+        </div>
+
+        <div class="dashboard-card" style="margin-bottom: 1.5rem;">
+          <h3 style="margin-bottom: 1rem;">Account Settings</h3>
+          <form id="accountSettingsForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="settingsFirstName">First Name</label>
+                <input type="text" id="settingsFirstName" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="settingsLastName">Last Name</label>
+                <input type="text" id="settingsLastName" class="form-input">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="settingsEmail">Email</label>
+                <input type="email" id="settingsEmail" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="settingsPhone">Phone</label>
+                <input type="tel" id="settingsPhone" class="form-input">
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Save Changes
+            </button>
+          </form>
+        </div>
+
+        <div class="dashboard-card" style="margin-bottom: 1.5rem;">
+          <h3 style="margin-bottom: 1rem;">Change Password</h3>
+          <form id="changePasswordForm">
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <input type="password" id="currentPassword" class="form-input">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="form-input">
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              Change Password
+            </button>
+          </form>
+        </div>
+
+        <div class="dashboard-card">
+          <h3 style="margin-bottom: 1rem;">Preferences</h3>
+          <div class="form-group">
+            <label>Theme</label>
+            <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+              <button class="btn-primary" id="lightThemeBtn">Light</button>
+              <button class="btn-primary" id="darkThemeBtn">Dark</button>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 1.5rem;">
+            <label>Language</label>
+            <div class="language-selector">
+              <button id="englishBtn" class="language-btn active" onclick="changeLanguage('en')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">
+                  <rect width="32" height="32" fill="#012169"/>
+                  <path d="M0 0l32 32M32 0L0 32" stroke="#fff" stroke-width="6"/>
+                  <path d="M0 0l32 32M32 0L0 32" stroke="#C8102E" stroke-width="4"/>
+                  <path d="M16 0v32M0 16h32" stroke="#fff" stroke-width="10.67"/>
+                  <path d="M16 0v32M0 16h32" stroke="#C8102E" stroke-width="6.4"/>
+                </svg>
+                <span>English</span>
+              </button>
+              <button id="frenchBtn" class="language-btn" onclick="changeLanguage('fr')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">
+                  <rect width="32" height="32" fill="#fff"/>
+                  <rect width="10.67" height="32" fill="#002395"/>
+                  <rect x="21.33" width="10.67" height="32" fill="#ED2939"/>
+                </svg>
+                <span>Français</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Upload Content Modal -->
+<div id="uploadContentModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Upload Course Content</h2>
+      <button class="modal-close" id="closeUploadModal">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <form id="uploadContentForm">
+      <div class="form-group">
+        <label for="uploadCourse">Course <span class="required">*</span></label>
+        <select id="uploadCourse" class="form-input" required>
+          <option value="">Select Course</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="uploadTitle">Title <span class="required">*</span></label>
+        <input type="text" id="uploadTitle" class="form-input" maxlength="200" required>
+      </div>
+      <div class="form-group">
+        <label for="uploadDescription">Description</label>
+        <textarea id="uploadDescription" class="form-input" rows="3" maxlength="1000"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="uploadType">Content Type <span class="required">*</span></label>
+          <select id="uploadType" class="form-input" required>
+            <option value="">Select Type</option>
+            <option value="LECTURE_NOTES">Lecture Notes</option>
+            <option value="ASSIGNMENT">Assignment</option>
+            <option value="EXAM">Exam</option>
+            <option value="VIDEO">Video</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="uploadFile">File <span class="required">*</span></label>
+          <input type="file" id="uploadFile" class="form-input" required>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" id="uploadCancelBtn">Cancel</button>
+        <button type="submit" class="btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Upload Content
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="editProfileModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Edit Profile</h2>
+      <button class="modal-close" id="closeEditProfileModal">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <form id="editProfileForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editFirstName">First Name</label>
+          <input type="text" id="editFirstName" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label for="editLastName">Last Name</label>
+          <input type="text" id="editLastName" class="form-input" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editEmail">Email</label>
+          <input type="email" id="editEmail" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label for="editPhone">Phone</label>
+          <input type="tel" id="editPhone" class="form-input" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editDepartment">Department</label>
+          <input type="text" id="editDepartment" class="form-input" maxlength="100" required>
+        </div>
+        <div class="form-group">
+          <label for="editQualification">Qualification</label>
+          <input type="text" id="editQualification" class="form-input" maxlength="100" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="editSpecialization">Specialization</label>
+        <input type="text" id="editSpecialization" class="form-input" maxlength="200">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editOfficeLocation">Office Location</label>
+          <input type="text" id="editOfficeLocation" class="form-input" maxlength="500">
+        </div>
+        <div class="form-group">
+          <label for="editOfficeHours">Office Hours</label>
+          <input type="text" id="editOfficeHours" class="form-input" maxlength="100">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" id="editProfileCancelBtn">Cancel</button>
+        <button type="submit" class="btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Update Grade Modal -->
+<div id="updateGradeModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Update Grade</h2>
+      <button class="modal-close" id="closeGradeModal">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <form id="updateGradeForm">
+      <input type="hidden" id="gradeEnrollmentId">
+      <div class="form-group">
+        <label>Student</label>
+        <input type="text" id="gradeStudentName" class="form-input" readonly>
+      </div>
+      <div class="form-group">
+        <label>Course</label>
+        <input type="text" id="gradeCourseName" class="form-input" readonly>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gradeMidterm">Midterm Grade (0-100)</label>
+          <input type="number" id="gradeMidterm" class="form-input" min="0" max="100" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="gradeFinal">Final Grade (0-100)</label>
+          <input type="number" id="gradeFinal" class="form-input" min="0" max="100" step="0.01">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="gradeAttendance">Attendance (%)</label>
+        <input type="number" id="gradeAttendance" class="form-input" min="0" max="100">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" id="gradeCancelBtn">Cancel</button>
+        <button type="submit" class="btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Update Grade
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- View Student Details Modal -->
+<div id="studentDetailsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Student Details</h2>
+      <button class="modal-close" id="closeStudentDetailsModal">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div id="studentDetailsContent" class="loading">
+      Loading student details...
+    </div>
+  </div>
+</div>
+<!-- À la fin du body, AVANT </body> -->
+<script src="../js/SessionTracker.js"></script>
+<script src="../js/user_session_handler.js"></script> <!-- ✅ UNE SEULE FOIS -->
+<script src="../js/lecturer.js"></script>
+<script src="../js/translations.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+package com.unt.academic_system.model;
+
+public enum NotificationType {
+    REGISTRATION_DEADLINE,
+    PAYMENT_REMINDER,
+    GRADE_RELEASED,
+    COURSE_APPROVED,
+    COURSE_REJECTED,
+    COURSE_UPDATE,           // ✅ AJOUTÉ
+    ENROLLMENT_CONFIRMATION, // ✅ AJOUTÉ
+    DEADLINE_REMINDER,       // ✅ AJOUTÉ
+    MATERIAL_UPLOADED,
+    ANNOUNCEMENT,
+    SYSTEM_UPDATE,
+    ACCOUNT_UPDATE
+}
